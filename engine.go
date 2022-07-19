@@ -13,7 +13,7 @@ import (
 // An engine can be configured with additional filters and tags.
 type Engine struct{ cfg render.Config }
 
-// NewEngine returns a new Engine.
+// NewEngine creates a new Engine.
 func NewEngine() *Engine {
 	e := Engine{render.NewConfig()}
 	filters.AddStandardFilters(&e.cfg)

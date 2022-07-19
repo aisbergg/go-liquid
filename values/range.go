@@ -5,7 +5,7 @@ type Range struct {
 	b, e int
 }
 
-// NewRange returns a new Range
+// NewRange creates a new Range
 func NewRange(b, e int) Range {
 	return Range{b, e}
 }

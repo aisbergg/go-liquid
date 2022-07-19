@@ -11,6 +11,7 @@ import (
 
 	"github.com/osteele/liquid/expressions"
 	"github.com/osteele/liquid/render"
+	"github.com/osteele/liquid/values"
 )
 
 // An IterationKeyedMap is a map that yields its keys, instead of (key, value) pairs, when iterated.
@@ -237,6 +238,18 @@ func makeIterator(value interface{}) iterable {
 		return makeIterationKeyedMap(value)
 	case yaml.MapSlice:
 		return mapSliceWrapper{value}
+	}
+	if om, ok := value.(values.Orderedmapper); ok {
+		if reflect.ValueOf(om).IsNil() {
+			return nil
+		}
+		array := make([][]interface{}, 0, om.Len())
+		fn := func(key, value interface{}) bool {
+			array = append(array, []interface{}{key, value})
+			return true
+		}
+		om.Range(fn)
+		return sliceWrapper(reflect.ValueOf(array))
 	}
 	switch reflect.TypeOf(value).Kind() {
 	case reflect.Array, reflect.Slice:

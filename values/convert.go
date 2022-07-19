@@ -159,6 +159,38 @@ func Convert(value interface{}, typ reflect.Type) (interface{}, error) { // noli
 			}
 			return result.Interface(), nil
 		}
+		if om, ok := value.(Orderedmapper); ok {
+			var err error
+			f := func(key, value interface{}) bool {
+				var k, v reflect.Value
+				var kc, ec interface{}
+				if key == nil {
+					k = reflect.Zero(typ.Key())
+				} else {
+					kc, err = Convert(key, typ.Key())
+					if err != nil {
+						return false
+					}
+					k = reflect.ValueOf(kc)
+				}
+				if value == nil {
+					v = reflect.Zero(et)
+				} else {
+					ec, err = Convert(value, et)
+					if err != nil {
+						return false
+					}
+					v = reflect.ValueOf(ec)
+				}
+				result.SetMapIndex(k, v)
+				return true
+			}
+			om.Range(f)
+			if err != nil {
+				return nil, err
+			}
+			return result.Interface(), nil
+		}
 		if rv.Kind() != reflect.Map {
 			return nil, conversionError("", value, typ)
 		}

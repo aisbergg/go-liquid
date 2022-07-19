@@ -51,6 +51,9 @@ func ValueOf(value interface{}) Value { // nolint: gocyclo
 	case Value:
 		return v
 	}
+	if v, ok := value.(Orderedmapper); ok {
+		return orederedmapValue{om: v}
+	}
 	switch reflect.TypeOf(value).Kind() {
 	case reflect.Ptr:
 		rv := reflect.ValueOf(value)
