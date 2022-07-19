@@ -60,6 +60,9 @@ func ValueOf(value interface{}) Value { // nolint: gocyclo
 		if rv.Type().Elem().Kind() == reflect.Struct {
 			return structValue{wrapperValue{value}}
 		}
+		if !rv.Elem().IsValid() {
+			return nilValue
+		}
 		return ValueOf(rv.Elem().Interface())
 	case reflect.String:
 		return stringValue{wrapperValue{value}}
